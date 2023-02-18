@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.1;netcoreapp3.1;net5.0;net6.0</TargetFrameworks>
+    <TargetFramework>net6.0</TargetFramework>
     <PackageId>BehaviourTree</PackageId>
     <PackageVersion>1.0.0</PackageVersion>
     <PackageTags>c# behavior behaviour tree behaviourtree behaviortree ai bot</PackageTags>
@@ -8,6 +8,7 @@
     <RepositoryUrl>https://github.com/Eraclys/BehaviourTree/</RepositoryUrl>
     <PackageLicenseUrl>https://github.com/Eraclys/BehaviourTree/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/Eraclys/BehaviourTree/</PackageProjectUrl>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
