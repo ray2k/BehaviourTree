@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <PackageId>BehaviourTree</PackageId>
     <PackageVersion>1.0.0</PackageVersion>
     <PackageTags>c# behavior behaviour tree behaviourtree behaviortree ai bot</PackageTags>
