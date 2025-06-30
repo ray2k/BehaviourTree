@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace BehaviourTree.Behaviours
 {
@@ -9,6 +10,11 @@ namespace BehaviourTree.Behaviours
         public ActionBehaviour(string name, Func<TContext, BehaviourStatus> action) : base(name)
         {
             _action = action;
+        }
+
+        public ActionBehaviour(string name, Func<TContext, Task<BehaviourStatus>> action) : base(name)
+        {
+            _action = context => action(context).GetAwaiter().GetResult();
         }
 
         protected override BehaviourStatus Update(TContext context)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using BehaviourTree.FluentBuilder;
 using NUnit.Framework;
 
@@ -7,6 +8,57 @@ namespace BehaviourTree.Tests.FluentBuilder
     [TestFixture]
     internal sealed class BehaviourTreeBuilderTests
     {
+        [Test]
+        public void Test_AsyncDo()
+        {
+            int assigned = 0;
+            var tree = BehaviourTree.FluentBuilder.FluentBuilder.Create<MockContext>()
+                .Sequence("root")
+                .Do("async action 1", async ctx =>
+                {
+                    assigned = 1000;
+                    await Task.Delay(100);
+                    return BehaviourStatus.Succeeded;
+                })
+                .End()
+                .Build();
+
+            var result = BehaviourTreeExpressionPrinter<MockContext>.GetExpression(tree);
+            Console.Write(result);
+
+            var ctx = new MockContext();
+            var status = tree.Tick(ctx);
+            Assert.AreEqual(BehaviourStatus.Succeeded, tree.Status);
+            Assert.AreEqual(1000, assigned);
+        }
+
+        [Test]
+        public void Test_AsyncCondition()
+        {
+            bool asyncInvoked = false;
+            var tree = BehaviourTree.FluentBuilder.FluentBuilder.Create<MockContext>()
+                .Sequence("root")
+                .Condition("async condition 1", async ctx =>
+                {
+                    asyncInvoked = true;
+                    return await Task.FromResult(true);
+                })
+                .Do("action 1", ctx =>
+                {
+                    return BehaviourStatus.Succeeded;
+                })
+                .End()
+                .Build();
+
+            var result = BehaviourTreeExpressionPrinter<MockContext>.GetExpression(tree);
+            Console.Write(result);
+
+            var ctx = new MockContext();
+            var status = tree.Tick(ctx);
+            Assert.AreEqual(BehaviourStatus.Succeeded, tree.Status);
+            Assert.IsTrue(asyncInvoked);
+        }
+
         [Test]
         public void Test()
         {

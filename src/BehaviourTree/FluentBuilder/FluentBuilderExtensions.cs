@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using BehaviourTree.Behaviours;
 using BehaviourTree.Composites;
 using BehaviourTree.Decorators;
@@ -22,10 +23,26 @@ namespace BehaviourTree.FluentBuilder
             return builder.PushLeaf(()=> new Condition<TContext>(name, condition));
         }
 
+        public static FluentBuilder<TContext> Condition<TContext>(
+            this FluentBuilder<TContext> builder,
+            string name,
+            Func<TContext, Task<bool>> condition)
+        {
+            return builder.PushLeaf(()=> new Condition<TContext>(name, condition));
+        }
+
         public static FluentBuilder<TContext> Do<TContext>(
             this FluentBuilder<TContext> builder,
             string name,
             Func<TContext, BehaviourStatus> action)
+        {
+            return builder.PushLeaf(() => new ActionBehaviour<TContext>(name, action));
+        }
+
+        public static FluentBuilder<TContext> Do<TContext>(
+            this FluentBuilder<TContext> builder,
+            string name,
+            Func<TContext, Task<BehaviourStatus>> action)
         {
             return builder.PushLeaf(() => new ActionBehaviour<TContext>(name, action));
         }
