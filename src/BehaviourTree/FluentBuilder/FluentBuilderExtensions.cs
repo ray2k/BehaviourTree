@@ -189,5 +189,21 @@ namespace BehaviourTree.FluentBuilder
         {
             return builder.PushComposite(children => new Random<TContext>(name, children[0], threshold, randomProvider));
         }
+
+        public static FluentBuilder<TContext> Conditional<TContext>(
+            this FluentBuilder<TContext> builder,
+            string name,
+            Func<TContext, bool> predicate)
+        {
+            return builder.PushComposite(children => new Conditional<TContext>(name, children[0], predicate));
+        }
+
+        public static FluentBuilder<TContext> Conditional<TContext>(
+            this FluentBuilder<TContext> builder,
+            string name, 
+            Func<TContext, Task<bool>> predicate)
+        {
+            return builder.PushComposite(children => new Conditional<TContext>(name, children[0], predicate));
+        }
     }
 }

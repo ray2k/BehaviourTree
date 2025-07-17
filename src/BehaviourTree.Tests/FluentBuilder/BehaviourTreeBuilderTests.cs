@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.Design;
 using System.Threading.Tasks;
 using BehaviourTree.FluentBuilder;
 using NUnit.Framework;
@@ -8,6 +9,64 @@ namespace BehaviourTree.Tests.FluentBuilder
     [TestFixture]
     internal sealed class BehaviourTreeBuilderTests
     {
+        [Test]
+        public void Test_ConditionalDo_NestedChild()
+        {
+            bool firstInvoked = false;
+            bool secondInvoked = false;
+            var tree = BehaviourTree.FluentBuilder.FluentBuilder.Create<MockContext>()
+                .Sequence("root")
+                    .Conditional("conditional", ctx => true) 
+                        .Sequence("sequence")
+                            .Do("action 1", ctx =>
+                            {
+                                firstInvoked = true;
+                                return BehaviourStatus.Succeeded;
+                            })
+                            .Do("action 2", ctx =>
+                            {
+                                secondInvoked = true;
+                                return BehaviourStatus.Succeeded;
+                            })
+                        .End()
+                    .End()
+                .End()
+                .Build();
+
+            var result = BehaviourTreeExpressionPrinter<MockContext>.GetExpression(tree);
+            Console.Write(result);
+
+            var ctx = new MockContext();
+            var status = tree.Tick(ctx);
+            Assert.IsTrue(firstInvoked);
+            Assert.IsTrue(secondInvoked);
+        }
+
+        [TestCase(true, BehaviourStatus.Succeeded)]
+        [TestCase(false, BehaviourStatus.Failed)]
+        public void Test_ConditionalDo(bool condition, BehaviourStatus childStatus)
+        {
+            bool actionInvoked = false;
+            var tree = BehaviourTree.FluentBuilder.FluentBuilder.Create<MockContext>()
+                .Sequence("root")
+                    .Conditional("conditional", ctx => condition)                
+                        .Do("action 1", ctx =>
+                        {
+                            actionInvoked = true;
+                            return childStatus;
+                        })
+                    .End()
+                .End()
+                .Build();
+
+            var result = BehaviourTreeExpressionPrinter<MockContext>.GetExpression(tree);
+            Console.Write(result);
+
+            var ctx = new MockContext();
+            var status = tree.Tick(ctx);
+            Assert.IsTrue(actionInvoked == condition);
+        }
+
         [Test]
         public void Test_AsyncDo()
         {
